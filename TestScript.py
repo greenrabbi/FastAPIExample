@@ -5,8 +5,11 @@ import pandas as pd
 import uvicorn
 import tempfile
 import os
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
 # Optional: Add CORS if you want to connect from a web portal
 app.add_middleware(
