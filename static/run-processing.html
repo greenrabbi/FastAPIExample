@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Data Processing App</title>
+</head>
+<body>
+    <h1>Run Data Processing</h1>
+    <form id="dataForm">
+        <input type="text" name="param1" placeholder="Parameter 1" required>
+        <input type="number" name="param2" placeholder="Parameter 2" required>
+        <input type="number" name="param3" placeholder="Parameter 3" step="any" required>
+        <button type="submit">Run Processing</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        const form = document.getElementById('dataForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            resultDiv.innerHTML = "Processing...";
+
+            try {
+                const response = await fetch('/process-data/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Processing failed');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'ProcessedData.xlsx';
+                link.click();
+
+                resultDiv.innerHTML = "✅ File downloaded.";
+            } catch (err) {
+                resultDiv.innerHTML = `❗ ${err.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
